@@ -1,0 +1,30 @@
+{
+  "name": "lista",
+  "version": "1.0.0",
+  "description": "- Projeto lista telefonica \t- usa node.js \t- docker -> mysql",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "serve": "nodemon routes/routes.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^6.8.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^29.7.0",
+    "jest-mock-extended": "^4.0.0-beta1",
+    "prisma": "^6.8.2",
+    "superagent": "^10.2.1",
+    "supertest": "^7.1.1"
+  }
+}

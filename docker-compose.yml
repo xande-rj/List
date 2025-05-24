@@ -1,0 +1,21 @@
+services :
+  db:
+    image: postgres
+    restart: always
+    shm_size: 300mb
+    environment:
+      POSTGRES_PASSWORD: ${postgresPass}
+      POSTGRES_USER: ${postgresUser}
+      POSTGRES_DB : ${postgresDb}
+    ports:
+      - 5432:5432
+  redis:
+    image: redis
+    command : redis-server --requirepass ${redisPass}
+    ports:
+      - 6379:6379
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

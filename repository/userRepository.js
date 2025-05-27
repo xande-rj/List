@@ -6,6 +6,6 @@ export class userRepository{
   }
 async createUser(data){
     return await this.prisma.user.create({data})
-
+  
   }
 }

@@ -9,25 +9,19 @@ constructor (){
     return await this.prisma.list.findMany()
 
   }
-
   async createList(data){
-
     return await this.prisma.list.create({data})
 
   }
 
   async findUniqueTelephone(data){
 
-    return await this.prisma.list.findFirst({
+    return await this.prisma.list.findFist({
       where:{
         telefone: data
       }
     })
 
-  }
-
-  async deletemany(){
-    await this.prisma.list.deleteMany({})
   }
 }
 

@@ -7,18 +7,18 @@ const createUser = async function (req,res){
   const Users = new userRepository()
    //pegar as informacaos do body e vericar se sao necessarias ou nao
   const User = req.body
-console.log(User)
-  const corpoUser = userCreateSchema.parse(User)
-  
-if(corpoUser){
-  console.log("aaaaaaqui")
-  } 
+  let userCorpo 
+  try{
+     userCorpo = userCreateSchema.parse(User)
+  }
+  catch(err){
+console.log(err)
+    return res.status(400).json({menssage:err.errors[0].message})
+  }
     
 
-
-
 // O unico erro do banco de dados e o email esta errado 
-  Users.createUser(req.body).then(
+  Users.createUser(userCorpo).then(
 
   (value)=>{
 
@@ -32,7 +32,6 @@ if(corpoUser){
     }
 
   )
-  
 }
 
 export {createUser}

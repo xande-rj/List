@@ -8,10 +8,8 @@ import {createUser} from '../Services/userServices.js'
 
 const app = express()
 const port = process.env.Port
-
 // app.use(express.json()) habilita pegar o json que e enviado no post
 app.use(express.json())
-
 
 app.post('/user',createUser)
 

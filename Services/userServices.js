@@ -2,11 +2,19 @@ import {userRepository} from "../repository/userRepository.js"
 
 import {userCreateSchema} from "../schemas/Users.schema.js"
 
-
+import {verificarEmail} from "./emailValidation/emailValitation.js"
 const createUser = async function (req,res){
   const Users = new userRepository()
-   //pegar as informacaos do body e vericar se sao necessarias ou nao
+
   const User = req.body
+  
+  const verivy=  verificarEmail(User.email) 
+if(verivy){
+    console.log(true)
+  }
+
+
+   //pegar as informacaos do body e vericar se sao necessarias ou nao
   let userCorpo 
   try{
      userCorpo = userCreateSchema.parse(User)

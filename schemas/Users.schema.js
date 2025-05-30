@@ -4,8 +4,7 @@ import {z} from "zod"
 // o segundo e de informacos que ira retornar ao usuario ao cadastro 
 
 // ERRO : {invalid_type_error: mensagem }
-const userCreateSchema = z.object({
-  nome :z.string({invalid_type_error: "Por favor verifique que o nome esta escrito de forma correta"})
+const userCreateSchema = z.object({ nome :z.string({invalid_type_error: "Por favor verifique que o nome esta escrito de forma correta"})
   .min(3), 
   //senha antes de criptografia
   senha: z.string({invalid_type_error: "verifique se a senha esta correta"}).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,"A senha e fraca").min(8),

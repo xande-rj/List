@@ -1,8 +1,9 @@
 - Projeto lista telefonica
-	- usa
+	- tecnologia:
 		- node.js
 		- express
 		- prisma
+    - bcrypt
 	- docker -> postgres *
 		 -> redis
  
@@ -10,22 +11,22 @@
 	- api que cadastra uma lista de usuarios que guarda uma lista telefonica. 
 
 -Rotas:
+  Usuario:
 
 	- POST /users -> rota de cadastro de usuario 
-		- nome, senha, email(confirmacao de email), telefone, sexo, idade, cidade
-			- Verifica se os tipos e as informacao sao unica, apos isso cria no banco o  
-usuario
+		- nome, senha, email, telefone, sexo, idade, cidade
+			- Verifica se os tipos e as informacao sao unica, apos isso cria no banco o usuario
 	- POST /users/login -> rota que retona o token de acesso .
 	- PUT /users/{userId} ->atualiza os campo do usuario se o token for certo  
 	- DELETE /users/{userId} -> verifica se a senha e o token sao os mesmo entao deleta ele 
 
 
+  Lista:
 
 	 - POST users/{userId}/create -> Rota de cadastro na lista 
 	 - GET users/{userId}/list -> Rota que retorna toda a lista do usuario salvando no cache
-	 - GET users/{userId}/list:{telefone} -> rota que retorna a um pessoa da lista com base
- no numero enviado
-  	 - PUT users/{userId}/list:{telefone} -> rota que altera alguma informacao na lista 
+	 - GET users/{userId}/list:{telefone} -> rota que retorna a um pessoa da lista com base no numero enviado
+    - PUT users/{userId}/list:{telefone} -> rota que altera alguma informacao na lista 
 	 - DELETE users/{userId}/list:{telefone} -> delete da lista pelo telefone fornecido 
 
 

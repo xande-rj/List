@@ -2,9 +2,11 @@
 import bcrypt from "bcrypt";
 
 const saltRounds = 10;
-
+// funcao async 
 const cryptorPass = async (password) => {
+ // esse try catch e se houver algum erro 
   try {
+    //bcrypt.hash e uma promise 
     const passHash = await bcrypt.hash(password, saltRounds);
     return passHash;
   } catch (err) {
@@ -12,6 +14,6 @@ const cryptorPass = async (password) => {
     throw err;
   }
 };
-
+// funcao retorna uma promise que precisa de then e catch
 
 export {cryptorPass}

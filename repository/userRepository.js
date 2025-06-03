@@ -8,4 +8,12 @@ async createUser(data){
     return await this.prisma.user.create({data})
   
   }
+
+  async findUniqueUser(data){
+      return await this.prisma.user.findUnique({
+      where:{
+        email: data,
+      },
+    })
+  }
 }

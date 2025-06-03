@@ -15,5 +15,17 @@ const cryptorPass = async (password) => {
   }
 };
 // funcao retorna uma promise que precisa de then e catch
+//
+const comparePass = async(password,passwordHash)=>{
+  try{
+    const result = await bcrypt.compare(password,passHash)
+    return result
+  }
+  catch(e)
+{
+    console.log("erro na comparacao"+ e)
+throw err
+  }
+}
 
-export {cryptorPass}
+export {cryptorPass,comparePass}

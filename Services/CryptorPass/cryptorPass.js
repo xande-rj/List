@@ -18,7 +18,7 @@ const cryptorPass = async (password) => {
 //
 const comparePass = async(password,passwordHash)=>{
   try{
-    const result = await bcrypt.compare(password,passHash)
+    const result = await bcrypt.compare(password,passwordHash)
     return result
   }
   catch(e)

@@ -2,25 +2,27 @@
 import {arrayInfoList, infoList} from "../schemas/Lista.schema.js"
 import {listRepository} from "../repository/listRepository.js"
 
-
+// pegar o email do jwt
+//  olhar no banco a lista 
 const listAll = async function (req,res){
   const list =  new listRepository()
 
   const listRepo = await list.findAll()
 
-  const listRepoZod = arrayInfoList.parse(listRepo)
 
-  res.status(200).send(listRepoZod)
+  res.status(200).json({messa:listRepo})
 }
 
 const registerList = async function (req,res){
   const list = new listRepository()
 
   if( await list.findUniqueTelephone(parseInt(req.body.telefone)) == null){
-    //aqui eu posso registra no banco 
-      const newList = await list.createList(req.body)
+console.log(req.body)
 
-      const listBody = infoList.parse(newList)
+
+      const listBody = infoList.parse(req.body)
+    //aqui eu posso registra no banco 
+      const newList = await list.createList(listBody)
 
       return res.status(201).send(listBody)
 

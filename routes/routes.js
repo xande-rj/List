@@ -4,7 +4,7 @@ import "dotenv/config"
 
 import {listAll, registerList} from '../Services/listServices.js'
 import {createUser, loginUser} from '../Services/userServices.js'
-
+import {jwtProtect} from '../Services/JwtUser/jwtUser.js'
 
 const app = express()
 const port = process.env.Port
@@ -16,8 +16,8 @@ app.post('/users/login',await loginUser)
 
 
 
-app.get('/lista',listAll)
-app.post('/cadastro',registerList)
+app.get('/users/lista',jwtProtect,listAll)
+app.post('/users/lista',jwtProtect,registerList)
 
 app.listen(port,()=>{
   console.log(`rodando na porta${port}`)

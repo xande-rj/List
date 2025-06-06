@@ -10,13 +10,21 @@ constructor (){
 
   }
   async createList(data){
-    return await this.prisma.list.create({data})
+    console.log(data)
+    return await this.prisma.list.create({
+      data:{
+        name:data.name,
+        telefone:data.telefone,
+        describe: data.describe,
+        authorId: data.author
+      }
+    })
 
   }
 
   async findUniqueTelephone(data){
 
-    return await this.prisma.list.findFist({
+    return await this.prisma.list.findFirst({
       where:{
         telefone: data
       }

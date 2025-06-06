@@ -86,8 +86,7 @@ const loginUser =  async function(req,res){
     //retorna o jwt 
   
     const token = jwtToken(userInfo.email)
-    return res.setHeader('Authorization',`Bearer${token}`).status(200).send("sucesso")
-
+    return res.setHeader('Authorization',`Bearer ${token}`).status(200).json({message:`Autenticação realizado com sucesso ${token} `})
   })
 
 }

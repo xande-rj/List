@@ -37,9 +37,7 @@
  modificar lista
 	- testes automatizados.
         - guardar em cache as listas.
-- ter uma criptografia no env, criptografar a senha do usuario e concatenar ela, salvando no banco, entao 
-toda vez que o usuario fizer o login ele vai criptografar a senha e concatenar com a do env e verificar 
-se e a mesma do banco
+
 - Banco de Dados (Postgres)  :
 	Usuario {
 		id unico int

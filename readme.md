@@ -4,6 +4,7 @@
 		- express
 		- prisma
     - bcrypt
+    - jwt
 	- docker -> postgres *
 		 -> redis
  

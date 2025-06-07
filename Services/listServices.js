@@ -2,13 +2,20 @@
 import {arrayInfoList, infoList} from "../schemas/Lista.schema.js"
 import {listRepository} from "../repository/listRepository.js"
 
+
+import {jwtInfo} from "./JwtUser/jwtUser.js"
 // pegar o email do jwt
-//  olhar no banco a lista 
+//  olhar no banco a lista
+//  com base no email 
 const listAll = async function (req,res){
+
+const emailJwt = jwtInfo(req)
+
+
   const list =  new listRepository()
 
-  const listRepo = await list.findAll()
-
+  const listRepo = await list.findAll(emailJwt)
+console.log(listRepo)
 
   res.status(200).json({messa:listRepo})
 }

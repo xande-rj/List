@@ -4,11 +4,13 @@ export class listRepository{
 constructor (){
     this.prisma = new PrismaClient()
   }
-  
-  async findAll(){
-    return await this.prisma.list.findMany()
 
-  }
+  //SELECT "List"."name", "List"."telefone", "List"."describe" FROM "List" INNER JOIN "User"  ON "List"."authorId" = "User"."id"  WHERE "User".email = 'dadadad@gmail.com';
+  //fazer esse sql ao procura todas os telefone salvos 
+  async findAll(email){
+    return await this.prisma.$queryRaw`SELECT "List"."name", "List"."telefone", "List"."describe" FROM "List" INNER JOIN "User"  ON "List"."authorId" = "User"."id"  WHERE "User".email = ${email};`
+} 
+
   async createList(data){
     console.log(data)
     return await this.prisma.list.create({

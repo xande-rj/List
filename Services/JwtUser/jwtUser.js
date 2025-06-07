@@ -10,7 +10,6 @@ const jwtToken =(emailUser)=>{
 try{
 const result = jwt.sign(emailUser,secret)
     return result
-  console.log(result)
   }
   catch(e){
     console.log(e)
@@ -24,8 +23,7 @@ const jwtProtect = (req,res,next)=>{
 
   if(!token)return res.status(401).json({ message: "Acesso negado!" });
 try{
-   const test= jwt.verify(token,secret)
-    console.log(test)
+    jwt.verify(token,secret)
     next()
   }
   catch(e){
@@ -34,4 +32,13 @@ try{
   
 }
 
-export {jwtToken,jwtProtect}
+const jwtInfo = (req)=>{
+   const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  const info = jwt.verify(token,secret)
+  console.log(info)
+
+}
+
+export {jwtToken,jwtProtect,jwtInfo}

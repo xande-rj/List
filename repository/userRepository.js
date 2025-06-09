@@ -6,7 +6,8 @@ export class userRepository{
   }
 
   // funcoa que cria um usuario
-async createUser(data){ return await this.prisma.user.create({data})
+async createUser(data){
+    return await this.prisma.user.create({data})
   
   }
 // funcao que acha um usuario de senha unica
@@ -16,6 +17,7 @@ async createUser(data){ return await this.prisma.user.create({data})
         email: data,
       },
       select:{
+        id:true,
         email:true,
         senha:true,
 

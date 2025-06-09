@@ -85,7 +85,7 @@ const loginUser =  async function(req,res){
     if(!valor) return res.status(406).send("senha ou usuario incorretos")
     //retorna o jwt 
   
-    const token = jwtToken(userInfo.email)
+    const token = jwtToken(userInfo.email,userInfo.id)
     return res.setHeader('Authorization',`Bearer ${token}`).status(200).json({message:`Autenticação realizado com sucesso ${token} `})
   })
 

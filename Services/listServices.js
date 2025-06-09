@@ -9,33 +9,43 @@ import {jwtInfo} from "./JwtUser/jwtUser.js"
 //  com base no email 
 const listAll = async function (req,res){
 
-const emailJwt = jwtInfo(req)
-
-
   const list =  new listRepository()
+ 
+  const emailJwt = jwtInfo(req)
 
-  const listRepo = await list.findAll(emailJwt)
-console.log(listRepo)
+  const listRepo = await list.findAll(emailJwt.emailUser)
+ 
+  const listArraySchema = arrayInfoList.parse(listRepo)
 
-  res.status(200).json({messa:listRepo})
+  res.status(200).json({Lista:listArraySchema})
 }
 
+
+// cria um contato na lista com base no id do Usario logado, vindo do token
+// verificar se o numero existe nos contatos do usuario
 const registerList = async function (req,res){
   const list = new listRepository()
 
-  if( await list.findUniqueTelephone(parseInt(req.body.telefone)) == null){
-console.log(req.body)
+  const contactList = infoList.parse(req.body)
+
+  const userInfoJwt =  jwtInfo(req)
+
+   await list.createList(contactList,userInfoJwt.idUser).then(
+
+  (value)=>{
+
+      return res.status(201).json({Contato: value})
+    
+    },
+  (error)=>{
+      return res.status(400).json({mensage:"Erro ao cadastra o contato"})
+    
+    }
+
+  )
 
 
-      const listBody = infoList.parse(req.body)
-    //aqui eu posso registra no banco 
-      const newList = await list.createList(listBody)
 
-      return res.status(201).send(listBody)
-
-  }
-  //TESTE FUTURO TELEFONE >= 9
-  res.status(409).json({mensage:"Telefone duplicado"})
   }
 
 

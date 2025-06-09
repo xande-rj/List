@@ -15,11 +15,11 @@ datasource db {
 }
 
 model List {
-    id Int @id @default(autoincrement())
+    id Int @id @default(autoincrement()) @unique
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt
     name  String @db.VarChar(100)
-    telefone Int @unique 
+    telefone String 
     describe String?
     author User @relation(fields: [authorId], references: [id])
     authorId Int

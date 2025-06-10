@@ -20,7 +20,6 @@ const listAll = async function (req,res){
   res.status(200).json({Lista:listArraySchema})
 }
 
-
 // cria um contato na lista com base no id do Usario logado, vindo do token
 // verificar se o numero existe nos contatos do usuario
 const registerList = async function (req,res){
@@ -43,11 +42,53 @@ const registerList = async function (req,res){
     }
 
   )
-
-
-
   }
 
 
+const listOne =async (req,res)=>{
+  // estancia a classe 
+  const list = new listRepository()
+  // recebe o paramametro na requisicao 
+   
+// pega as informacoes no jwt 
+  const userInfoJwt =  jwtInfo(req)
+ // procura no banco com base no telefone e no jwt  
+ await list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser).then(
+    (value)=>{
 
-export {listAll, registerList}
+      try {
+        const contato = infoList.parse(value)
+      return res.status(200).json({Contato:contato})    
+      } catch (error) {
+        res.status(400).json({mensage: "erro na busca verifique se as informacoes estao certas"})
+      }
+      
+    }
+    
+  )
+
+
+}
+
+
+const updateList = async(req,res)=>{
+
+// estancia a classe 
+  const list = new listRepository()
+  // recebe o paramametro na requisicao 
+   
+// pega as informacoes no jwt 
+  const userInfoJwt =  jwtInfo(req)
+ // procura no banco com base no telefone e no jwt  
+ await list.updateUniqueTelephone(req.body.describe, userInfoJwt.idUser, req.params.telefone).then(
+    (value)=>{
+
+      console.log(value)
+    }
+    
+  )
+
+
+}
+
+export {listAll, registerList, listOne, updateList}

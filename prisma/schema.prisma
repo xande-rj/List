@@ -15,16 +15,18 @@ datasource db {
 }
 
 model List {
-    id Int @id @default(autoincrement()) @unique
-    createdAt DateTime @default(now())
-    updateAt DateTime @updatedAt
-    name  String @db.VarChar(100)
-    telefone String 
-    describe String?
-    author User @relation(fields: [authorId], references: [id])
-    authorId Int
-  }
+  id        Int      @id @default(autoincrement()) @unique
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  name      String   @db.VarChar(100)
+  telefone  String
+  describe  String?
 
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+
+  @@unique([authorId, telefone], name: "unique_user_telefone")
+}
 
 model User {
     id Int @id @default(autoincrement()) @unique
@@ -39,3 +41,6 @@ model User {
     updateAt DateTime @updatedAt
     listas List[]
   }
+
+
+

@@ -24,14 +24,25 @@ constructor (){
 
   }
 
-  async findUniqueTelephone(data){
+  async findUniqueTelephone(data, Id){
 
     return await this.prisma.list.findFirst({
       where:{
-        telefone: data
-      }
+        telefone: data,
+        authorId: Id
+      },
     })
 
+  }
+
+  async updateUniqueTelephone(contato,Id,Telefone){
+    return await this.prisma.list.update({
+      where:{
+        telefone:Telefone,
+        authorId:Id
+      },
+      data:contato,
+    })
   }
 }
 

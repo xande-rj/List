@@ -2,7 +2,7 @@ import express from "express"
 
 import "dotenv/config"
 
-import {listAll, registerList} from '../Services/listServices.js'
+import {listAll, registerList,listOne, updateList} from '../Services/listServices.js'
 import {createUser, loginUser} from '../Services/userServices.js'
 import {jwtProtect} from '../Services/JwtUser/jwtUser.js'
 
@@ -16,8 +16,10 @@ app.post('/users/login',await loginUser)
 
 
 
-app.get('/users/lista',jwtProtect,listAll)
-app.post('/users/lista',jwtProtect,registerList)
+app.get('/users/list',jwtProtect,listAll)
+app.post('/users/list',jwtProtect,registerList)
+app.get('/users/list/:telefone',jwtProtect,listOne)
+app.put('/users/list/:telefone',jwtProtect,updateList)
 
 app.listen(port,()=>{
   console.log(`rodando na porta${port}`)

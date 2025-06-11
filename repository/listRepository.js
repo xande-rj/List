@@ -35,13 +35,20 @@ constructor (){
 
   }
 
-  async updateUniqueTelephone(contato,Id,Telefone){
-    return await this.prisma.list.update({
+  async updateUniqueTelephone(dados,Id){
+   return await this.prisma.list.update({
       where:{
-        telefone:Telefone,
-        authorId:Id
+        id:Id
       },
-      data:contato,
+      data:dados
+    })
+  }
+
+  async deleteUniqueTelephone(Id){
+    return await this.prisma.list.delete({
+      where:{
+        id:Id
+      }
     })
   }
 }

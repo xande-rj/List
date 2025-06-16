@@ -10,7 +10,7 @@ import {jwtToken} from "./JwtUser/jwtUser.js"
 const createUser = async function (req,res){
   const Users = new userRepository()
 
- //pegar as informacaos do body e vericar se sao necessarias ou nao
+ //pegar as informacaos do body e verifica se sao necessarias ou nao
   let userCorpo 
   try{
      userCorpo = userCreateSchema.parse(req.body)
@@ -26,7 +26,7 @@ const createUser = async function (req,res){
 
   })
   .catch((err) => {
-      return res.status(500).json({message: "Erro nop servidor tente novamente mais tarde"})
+      return res.status(500).json({message: "Erro no servidor tente novamente mais tarde"})
   });
 
   
@@ -54,7 +54,8 @@ const loginUser =  async function(req,res){
   // devolve um jwt que permite o acesso a lista
   
   const Users = new userRepository()
- let User
+
+  let User
   // verifica se o as informacao sao as certas 
   try{
       User = userLoginSchema.parse(req.body)
@@ -63,7 +64,7 @@ const loginUser =  async function(req,res){
     res.status(404).send("verifique se os campos estao digitados corretamente")
   }
 
- let userInfo
+   let userInfo
     // pega as informacoes do banco se existir o usuario
    await Users.findUniqueUser(User.email)
   .then((value)=>{
@@ -86,7 +87,7 @@ const loginUser =  async function(req,res){
     //retorna o jwt 
   
     const token = jwtToken(userInfo.email,userInfo.id)
-    return res.setHeader('Authorization',`Bearer ${token}`).status(200).json({message:`Autenticação realizado com sucesso ${token} `})
+    return res.status(200).json({message:`Autenticação realizado com sucesso ${token} `})
   })
 
 }

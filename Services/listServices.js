@@ -1,9 +1,9 @@
-
 import {arrayInfoList, infoList} from "../schemas/Lista.schema.js"
+
 import {listRepository} from "../repository/listRepository.js"
 
-
 import {jwtInfo} from "./JwtUser/jwtUser.js"
+
 // pegar o email do jwt
 //  olhar no banco a lista
 //  com base no email 
@@ -15,17 +15,26 @@ const listAll = async function (req,res){
 
   const listRepo = await list.findAll(emailJwt.emailUser)
  
+  try{
   const listArraySchema = arrayInfoList.parse(listRepo)
+  }catch(e){
+    res.status(400).json({message: "Erro no recebimento das informacoes"})
+  }
 
   res.status(200).json({Lista:listArraySchema})
 }
 
 // cria um contato na lista com base no id do Usario logado, vindo do token
-// verificar se o numero existe nos contatos do usuario
 const registerList = async function (req,res){
-  const list = new listRepository()
 
+  const list = new listRepository()
+  
+  try{
   const contactList = infoList.parse(req.body)
+  }
+  catch(e){
+    res.status(400).json({message: "Verifique se as informacoes estao corretas"})
+  }
 
   const userInfoJwt =  jwtInfo(req)
 

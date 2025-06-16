@@ -14,9 +14,9 @@ const listAll = async function (req,res){
   const emailJwt = jwtInfo(req)
 
   const listRepo = await list.findAll(emailJwt.emailUser)
- 
+  let listArraySchema
   try{
-  const listArraySchema = arrayInfoList.parse(listRepo)
+   listArraySchema = arrayInfoList.parse(listRepo)
   }catch(e){
     res.status(400).json({message: "Erro no recebimento das informacoes"})
   }
@@ -29,8 +29,9 @@ const registerList = async function (req,res){
 
   const list = new listRepository()
   
+  let contactList 
   try{
-  const contactList = infoList.parse(req.body)
+  contactList = infoList.parse(req.body)
   }
   catch(e){
     res.status(400).json({message: "Verifique se as informacoes estao corretas"})

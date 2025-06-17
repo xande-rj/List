@@ -4,6 +4,8 @@ import {listRepository} from "../repository/listRepository.js"
 
 import {jwtInfo} from "./JwtUser/jwtUser.js"
 
+import {redisCreate,redisListAll} from "./redis/redisConnection.js"
+
 // pegar o email do jwt
 //  olhar no banco a lista
 //  com base no email 
@@ -12,16 +14,25 @@ const listAll = async function (req,res){
   const list =  new listRepository()
  
   const emailJwt = jwtInfo(req)
+  // verificar se existe no red
+  
+  const redisAll = await redisListAll(emailJwt.idUser)
+
+  if (redisAll) {
+   return res.status(200).json({Contato:redisAll})  
+  }
 
   const listRepo = await list.findAll(emailJwt.emailUser)
+  
   let listArraySchema
   try{
    listArraySchema = arrayInfoList.parse(listRepo)
+   await redisCreate(listArraySchema,emailJwt.idUser)
   }catch(e){
     res.status(400).json({message: "Erro no recebimento das informacoes"})
   }
 
-  res.status(200).json({Lista:listArraySchema})
+  res.status(200).json({Contatos:listArraySchema})
 }
 
 // cria um contato na lista com base no id do Usario logado, vindo do token
@@ -42,7 +53,7 @@ const registerList = async function (req,res){
    await list.createList(contactList,userInfoJwt.idUser).then(
 
   (value)=>{
-
+    
       return res.status(201).json({Contato: value})
     
     },

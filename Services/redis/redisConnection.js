@@ -8,24 +8,31 @@ const client = await createClient({
 
 client.on('error', (err)=>console.log('Error Redis',err))
 
-const redisListAll = async ()=>{
 await client.connect()
 
-const lista = [
-  { name: "aleax", telefone: "33160961", describe: "" },
-  { name: "aleax", telefone: "33160962", describe: "" },
-  /* ... */
-];
+const redisCreate = async (list,id)=>{
 
-await client.set('minhalista', JSON.stringify(lista))
-
-
-const data = await client.get('minhalista')
-
-const array = JSON.parse(data)
-console.log(array)
-
-await client.quit()
+try{
+  await client.set(`${id}`,JSON.stringify(list),{EX:300 })//expira apos 5 minutos ou 300 seg
+}
+catch(e){
+  return false
 }
 
-redisListAll()
+}
+
+
+
+const redisListAll = async (id)=>{
+
+
+const data = await client.get(`${id}`)
+
+if(data){
+const array = JSON.parse(data)
+return array
+}
+return false
+}
+
+export{redisCreate,redisListAll}

@@ -1,10 +1,10 @@
 import {userRepository} from "../repository/userRepository.js"
 
-import {userCreateSchema, userLoginSchema} from "../schemas/Users.schema.js"
+import {userCreateSchema, userLoginSchema, userUpdatePassword} from "../schemas/Users.schema.js"
 
 import {cryptorPass, comparePass} from "./CryptorPass/cryptorPass.js"
 
-import {jwtToken} from "./JwtUser/jwtUser.js"
+import {jwtToken, jwtInfo} from "./JwtUser/jwtUser.js"
 
 
 const createUser = async function (req,res){
@@ -91,4 +91,74 @@ const loginUser =  async function(req,res){
   })
 
 }
-export {createUser, loginUser}
+
+const updateUser = async(req,res)=>{
+  // pegar o email do usuario
+  const userInfo = jwtInfo(req)
+  const User = new userRepository()
+  
+  let userBody = req.body
+
+// verifica se tem senha para altera
+  if(userBody.senha){
+    try{
+       userBody.senha = userUpdatePassword.parse(userBody.senha)
+    }
+    catch(e){
+      return res.status(400).json({message:'verifique a senha esta correta'})
+    }
+    await cryptorPass(userBody.senha)
+  .then((hash) => {
+    userBody.senha = hash
+
+  })
+  .catch((err) => {
+      return res.status(500).json({message: "Erro no servidor tente novamente mais tarde"})
+  });
+
+
+  }
+
+  await User.updateUser(userInfo.emailUser,req.body).then((value)=>{
+
+    res.status(200).json({message: "Sucesso"})
+  })
+
+}
+
+
+const deleteUser = async(req,res)=>{
+  const User = new userRepository()
+
+  const userBody = req.body
+
+  const userInfo = jwtInfo(req)
+
+  
+   let userInfoData
+    // pega as informacoes do banco se existir o usuario
+   await User.findUniqueUser(userInfo.emailUser)
+  .then((value)=>{
+// banco retorna null se nao existir usuario
+    if(value == null){
+      return res.status(404).json({message:"senha ou usuario incorretos"})
+    }
+    userInfoData = value
+  }
+  )
+
+
+// verificar se a senha esta corretamente digitada
+  await comparePass(userBody.senha,userInfoData.senha)
+  .then((valor)=>{
+    // verifica a volta da funcao de criptografia
+    if(!valor) return res.status(406).json({message:"senha ou usuario incorretos"})
+  })
+
+  await User.deleteUser(userInfo.emailUser,userInfo.idUser).then((valor)=>{
+      return res.status(200).json({message: "Usuario deletado com sucesso"})
+  })
+  
+
+}
+export {createUser, loginUser, updateUser, deleteUser}

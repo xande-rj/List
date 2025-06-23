@@ -24,4 +24,26 @@ async createUser(data){
       }
     })
   }
+
+  async updateUser(userEmail,data){
+    return await this.prisma.user.update({
+      where:{
+        email: userEmail
+      },
+      data:data
+    })
+  }
+
+  async deleteUser(userEmail,userId){
+    await this.prisma.list.deleteMany({
+      where:{
+        authorId: userId,
+      }
+    })
+ return await this.prisma.user.delete({
+      where:{
+        email:userEmail
+      }
+    })
+  }
 }

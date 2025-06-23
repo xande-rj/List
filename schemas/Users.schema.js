@@ -20,4 +20,8 @@ const userLoginSchema = z.object({
   senha: z.string({invalid_type_error: "verifique se a senha esta correta"}).min(8),
 })
 
-export {userCreateSchema, userLoginSchema}
+const userUpdatePassword = z.string({
+  senha:z.string({invalid_type_error:"Verique se a senha esta digitada corretamente"}).regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/,"A senha e fraca").min(8),
+})
+
+export {userCreateSchema, userLoginSchema, userUpdatePassword}

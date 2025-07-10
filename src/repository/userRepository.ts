@@ -1,10 +1,14 @@
 import { PrismaClient } from "@prisma/client"
 
-import { userCreateSchema, userInfoData } from "../schemas/Users.schema"
+import { userCreateSchema, userInfoData, userUpdatePassword, userCreate } from "../schemas/Users.schema"
 
 import { z } from 'zod'
 
 type userCreateSchema = z.infer<typeof userCreateSchema>
+
+type updatedater = z.infer<typeof userUpdatePassword>
+
+type userCreate = z.infer<typeof userCreate>
 
 export class userRepository {
   private prisma: PrismaClient
@@ -14,12 +18,20 @@ export class userRepository {
   }
 
   // funcoa que cria um usuario
-  async createUser(data: userCreateSchema): Promise<userCreateSchema> {
-    return await this.prisma.user.create({ data })
+  async createUser(data: userCreateSchema): Promise<userCreate> {
+    return await this.prisma.user.create({
+      data,
+      omit: {
+        senha: true,
+        createdAt: true,
+        updateAt: true,
+        id: true
+      }
+    })
 
   }
   // funcao que acha um usuario de senha unica
-  async findUniqueUser(data: any): Promise<userInfoData | null> {
+  async findUniqueUser(data: string): Promise<userInfoData | null> {
     return await this.prisma.user.findUnique({
       where: {
         email: data,
@@ -28,21 +40,26 @@ export class userRepository {
         id: true,
         email: true,
         senha: true,
-
       }
     })
   }
 
-  async updateUser(userEmail: string, data) {
+  async updateUser(userEmail: string, data: updatedater): Promise<updatedater> {
     return await this.prisma.user.update({
       where: {
         email: userEmail
       },
-      data: data
+      data: data,
+      omit: {
+        id: true,
+        senha: true,
+        updateAt: true,
+        createdAt: true
+      }
     })
   }
 
-  async deleteUser(userEmail, userId) {
+  async deleteUser(userEmail: string, userId: number): Promise<userCreate> {
     await this.prisma.list.deleteMany({
       where: {
         authorId: userId,
@@ -51,6 +68,12 @@ export class userRepository {
     return await this.prisma.user.delete({
       where: {
         email: userEmail
+      },
+      omit: {
+        id: true,
+        senha: true,
+        updateAt: true,
+        createdAt: true
       }
     })
   }

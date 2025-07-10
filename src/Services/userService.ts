@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 
 import { userRepository } from "../repository/userRepository"
 
-import { userCreateSchema, userLoginSchema, userUpdatePassword, userInfoData, userUpdate } from "../schemas/Users.schema"
+import { userCreateSchema, userLoginSchema, userUpdatePassword, userInfoData, userCreate } from "../schemas/Users.schema"
 
 import { cryptorPass, comparePass } from "./CryptorPass/cryptorPass"
 
@@ -25,7 +25,9 @@ interface Password {
   senha: string
 }
 
-const createUser = async function (req: Request, res: Response<Usuario | { message: string } | { erro: string }>): Promise<void> {
+type userCreate = z.infer<typeof userCreate>
+
+const createUser = async function (req: Request, res: Response<userCreate | { message: string } | { erro: string }>): Promise<void> {
 
   try {
 
@@ -36,7 +38,7 @@ const createUser = async function (req: Request, res: Response<Usuario | { messa
     userCorpo.senha = await cryptorPass(userCorpo.senha)
 
     //envia para o banco 
-    const newUser: Usuario = await new userRepository().createUser(userCorpo)
+    const newUser: userCreate = await new userRepository().createUser(userCorpo)
 
     //retorna o usuario criado
     res.status(201).json(newUser)
@@ -45,8 +47,8 @@ const createUser = async function (req: Request, res: Response<Usuario | { messa
     if (err instanceof ZodError) {
       res.status(400).json({ erro: "erro no tipo" })
     }
-    console.log(err)
-    res.status(400).json({ erro: "erro de Criacao" })
+
+    res.status(400).json({ erro: "erro de Criacao verifique os campos estao corretos" })
   }
 
 }
@@ -98,8 +100,8 @@ const updateUser = async (req: Request, res: Response<{ message: string } | { er
       }
     }
 
-    await new userRepository().updateUser(userInfo.emailUser, userBody)
-    res.status(201).json({ message: `Informacoes alteradas com sucesso` })
+    const userUpdate = await new userRepository().updateUser(userInfo.emailUser, userBody)
+    res.status(201).json({ message: `Informacoes alteradas com sucesso ${userUpdate}` })
   }
   catch (err) {
 
@@ -121,16 +123,28 @@ const deleteUser = async (req: Request, res: Response<{ message: string } | { er
 
     const userInfoData = await new userRepository().findUniqueUser(userInfo.emailUser)
 
-    // verificar se a senha esta corretamente digitada
-    await comparePass(userBody.senha, userInfoData.senha)
-      .then((valor) => {
-        // verifica a volta da funcao de criptografia
-        if (!valor) return res.status(406).json({ message: "senha ou usuario incorretos" })
-      })
+    const PassValidator = await comparePass(userBody.senha, userInfoData?.senha)
 
-    await User.deleteUser(userInfo.emailUser, userInfo.idUser).then((valor) => {
-      return res.status(200).json({ message: "Usuario deletado com sucesso" })
-    })
+    if (!PassValidator) {
+      res.status(400).json({ erro: "verifique a senha" })
+    }
+
+
+    const deleteResult = await new userRepository().deleteUser(userInfo.emailUser, userInfo.idUser)
+
+    if (!deleteResult) {
+      res.status(400).json({ erro: "verifique a senha" })
+    }
+
+    res.status(200).json({ message: "Usuario deletado com sucesso" })
+
+  }
+  catch (err) {
+    if (err instanceof ZodError) {
+      res.status(400).json({ erro: `${err.issues[0].message}` })
+    }
+    res.status(400).json({ erro: 'verifique a senha esta correta' })
+
   }
 
 }

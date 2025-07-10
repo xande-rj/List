@@ -16,6 +16,15 @@ const userCreateSchema = z.object({
   cidade: z.string({ invalid_type_error: "verifique se a cidade esta correta" }).min(10, "Verifique se a cidade digitada esta com o nome completo")
 })
 
+const userCreate = z.object({
+  nome: z.string(),
+  telefone: z.string(),
+  sexo: z.string(),
+  idade: z.number().int(),
+  cidade: z.string(),
+  email: z.string().email(),
+})
+
 const userLoginSchema = z.object({
   email: z.string({ invalid_type_error: "Verique se o email digitado esta correto" }).email(),
   senha: z.string({ invalid_type_error: "verifique se a senha esta correta" }).min(8),
@@ -31,10 +40,10 @@ const userUpdatePassword = z.object({
   senha: z.string({ invalid_type_error: "Verique se a senha esta digitada corretamente" })
     .regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[$*&@#])[0-9a-zA-Z$*&@#]{8,}$/, "A senha e fraca").min(8).optional(),
 })
+
 interface userInfoData {
   id?: number,
   email?: string,
   senha?: string
-
 }
-export { userCreateSchema, userLoginSchema, userUpdatePassword, userInfoData }
+export { userCreateSchema, userLoginSchema, userUpdatePassword, userInfoData, userCreate }

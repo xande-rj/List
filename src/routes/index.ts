@@ -2,10 +2,10 @@ import express from "express"
 
 import "dotenv/config"
 
-import { listAll, registerList, listOne, updateList, listDelete } from '../Services/listServices.js'
-import { createUser, loginUser, updateUser, deleteUser } from '../Services/userService.ts'
+import { listAll, registerList, listOne, updateList, listDelete } from '../Services/listServices'
+import { createUser, loginUser, updateUser, deleteUser } from '../Services/userService'
 
-import { jwtProtect } from '../Services/JwtUser/jwtUser.js'
+import { jwtProtect } from '../Services/JwtUser/jwtUser'
 
 const app = express()
 const port = process.env.Port || 3000
@@ -20,14 +20,14 @@ app.post('/users/login', loginUser)
 app.put('/users', jwtProtect, updateUser)
 app.delete('/users', jwtProtect, deleteUser)
 
-/*
+
 // rota de lista de contatos
 app.get('/users/list', jwtProtect, listAll)
 app.post('/users/list', jwtProtect, registerList)
 app.get('/users/list/:telefone', jwtProtect, listOne)
 app.put('/users/list/:telefone', jwtProtect, updateList)
 app.delete('/users/list/:telefone', jwtProtect, listDelete)
-*/
+
 
 app.listen(port, (): void => {
   console.log(`rodando na porta${port}`)

@@ -7,32 +7,33 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { arrayInfoList, infoList } from "../schemas/Lista.schema.js";
-import { listRepository } from "../repository/listRepository.js";
-import { jwtInfo } from "./JwtUser/jwtUser.js";
-import { redisCreate, redisListAll } from "./redis/redisConnection.js";
-// pegar o email do jwt
-//  olhar no banco a lista
-//  com base no email 
+import { arrayInfoList, infoList } from "../schemas/List.schema";
+import { listRepository } from "../repository/listRepository";
+import { jwtInfo } from "./JwtUser/jwtUser";
+import { redisCreate, redisListAll } from "./redis/redisConnection";
+/*
+interface RedisList{[
+  
+]}*/
 const listAll = function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const list = new listRepository();
-        const emailJwt = jwtInfo(req);
-        // verificar se existe no red
-        const redisAll = yield redisListAll(emailJwt.idUser);
-        if (redisAll) {
-            return res.status(200).json({ Contato: redisAll });
-        }
-        const listRepo = yield list.findAll(emailJwt.emailUser);
-        let listArraySchema;
         try {
+            const emailJwt = jwtInfo(req);
+            // verificar se existe no red
+            console.log(emailJwt);
+            const redisAll = yield redisListAll(emailJwt.idUser);
+            if (redisAll) {
+                res.status(200).json({ Contato: redisAll });
+            }
+            const listRepo = yield new listRepository().findAll(emailJwt.emailUser);
+            let listArraySchema;
             listArraySchema = arrayInfoList.parse(listRepo);
             yield redisCreate(listArraySchema, emailJwt.idUser);
+            res.status(200).json({ Contatos: listArraySchema });
         }
         catch (e) {
             res.status(400).json({ message: "Erro no recebimento das informacoes" });
         }
-        res.status(200).json({ Contatos: listArraySchema });
     });
 };
 // cria um contato na lista com base no id do Usario logado, vindo do token

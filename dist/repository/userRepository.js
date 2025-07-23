@@ -15,7 +15,15 @@ export class userRepository {
     // funcoa que cria um usuario
     createUser(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.prisma.user.create({ data });
+            return yield this.prisma.user.create({
+                data,
+                omit: {
+                    senha: true,
+                    createdAt: true,
+                    updateAt: true,
+                    id: true
+                }
+            });
         });
     }
     // funcao que acha um usuario de senha unica
@@ -39,7 +47,13 @@ export class userRepository {
                 where: {
                     email: userEmail
                 },
-                data: data
+                data: data,
+                omit: {
+                    id: true,
+                    senha: true,
+                    updateAt: true,
+                    createdAt: true
+                }
             });
         });
     }
@@ -53,6 +67,12 @@ export class userRepository {
             return yield this.prisma.user.delete({
                 where: {
                     email: userEmail
+                },
+                omit: {
+                    id: true,
+                    senha: true,
+                    updateAt: true,
+                    createdAt: true
                 }
             });
         });

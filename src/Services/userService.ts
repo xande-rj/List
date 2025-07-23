@@ -100,15 +100,15 @@ const updateUser = async (req: Request, res: Response<{ message: string } | { er
       }
     }
 
-    const userUpdate = await new userRepository().updateUser(userInfo.emailUser, userBody)
-    res.status(201).json({ message: `Informacoes alteradas com sucesso ${userUpdate}` })
+    await new userRepository().updateUser(userInfo.emailUser, userBody)
+    res.status(201).json({ message: `Informacoes alteradas com sucesso` })
   }
   catch (err) {
 
     if (err instanceof ZodError) {
       res.status(400).json({ erro: `${err.issues[0].message}` })
     }
-    res.status(400).json({ erro: 'verifique a senha esta correta' })
+    res.status(400).json({ erro: 'Erro ao atualiza usuario' })
   }
 
 }

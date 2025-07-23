@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-//segredo
 //passa pelo .env
 // cria um token com meu segrdo 
 const secret = process.env.secretJwt;
@@ -9,17 +8,17 @@ const jwtToken = (emailUser, idUser) => {
         const result = jwt.sign({ emailUser, idUser }, secret);
         return result;
     }
-    catch (e) {
+    catch (err) {
         throw err;
     }
 };
 // Protecao de entrada de rotas 
 // verifica se o token foi feito com meu segredo 
 const jwtProtect = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token)
-        return res.status(401).json({ message: "Acesso negado!" });
+    const authHeader = req.headers.authorization;
+    const token = authHeader === null || authHeader === void 0 ? void 0 : authHeader.split(" ")[1];
+    if (token == undefined)
+        res.status(401).json({ message: "Acesso negado!" });
     try {
         jwt.verify(token, secret);
         next();
@@ -34,6 +33,6 @@ const jwtInfo = (req) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     const info = jwt.verify(token, secret);
-    return info;
+    console.log(info);
 };
 export { jwtToken, jwtProtect, jwtInfo };

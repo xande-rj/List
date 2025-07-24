@@ -29,7 +29,7 @@ const listAll = async function (req: Request, res: Response): Promise<void> {
 
     const redisAll: readonly [{ name: string, telefone: string, describe: string }] = await redisListAll(emailJwt.idUser)
     if (redisAll) {
-      res.status(200).json({ Contato: redisAll })
+      res.status(200).json({ Contatos: redisAll })
       return
     }
 
@@ -66,82 +66,68 @@ const registerList = async function (req: Request, res: Response): Promise<void>
 }
 
 
-const listOne = async (req, res) => {
-  // estancia a classe 
-  const list = new listRepository()
-  // recebe o paramametro na requisicao 
+const listOne = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userInfoJwt: UserJwt = jwtInfo(req)
 
-  // pega as informacoes no jwt 
-  const userInfoJwt = jwtInfo(req)
-  // procura no banco com base no telefone e no jwt  
-  await list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser).then(
-    (value) => {
+    const ContatoUnico: { name: string, telefone: string, describe: string | null, authorId: number } | null = await new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser)
 
-      try {
-        const contato = infoList.parse(value)
-        return res.status(200).json({ Contato: contato })
-      } catch (error) {
-        res.status(400).json({ mensage: "erro na busca verifique se as informacoes estao certas" })
-      }
 
+    if (ContatoUnico == null) {
+      res.status(400).json({ message: "Erro no banco de dados" })
+      return
+    }
+    res.status(200).json({ ContatoUnico })
+  }
+  catch (err) {
+    res.status(400).json({ message: 'Erro no Servico' })
+  }
+}
+
+
+const updateList = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+    const userInfoJwt: UserJwt = jwtInfo(req)
+
+    const ContatoInfo: { name: string, telefone: string, describe: string | null, authorId: number, id: number } | null = await new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser)
+
+    if (ContatoInfo == null) {
+      res.status(400).json({ message: "Erro no Banco de dados verifique as informacoes" })
+      return
     }
 
-  )
+    const AttContato: { name: string, updateAt: Date, telefone: string, describe: string | null } = await new listRepository().updateUniqueTelephone(req.body, ContatoInfo.id)
+
+    res.status(200).json({ AttContato })
+  }
+  catch (err) {
+    res.status(400).json({ message: "Erro ao atualizar as informacoes" })
+  }
 
 
 }
 
 
-const updateList = async (req, res) => {
+const listDelete = async (req: Request, res: Response): Promise<void> => {
+  try {
 
-  // estancia a classe 
-  const list = new listRepository()
-  // pega as informacoes no jwt 
-  const userInfoJwt = jwtInfo(req)
-  // pega as informacoes do contato desejado 
-  const contatoInfo = await list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser)
-  if (contatoInfo == null) {// verifica se ele existe
-    return res.status(400).json({ message: "verifique se os dados estao corretos" })
-  }
+    const userInfoJwt: UserJwt = jwtInfo(req)
 
+    const ContatoInfo: { name: string, telefone: string, describe: string | null, authorId: number, id: number } | null = await new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser)
 
-  // procura no banco com base no telefone e no jwt  
-  await list.updateUniqueTelephone(req.body, contatoInfo.id).then(
-    (value) => {
-      try {
-        const contatoInfo = infoList.parse(value)
-        res.status(200).json({ message: contatoInfo })
-      }
-      catch (e) {
-        res.status(400).json({ message: " Erro na execucao" })
-      }
-
-    },
-    (error) => {
-      res.status(400).json({ message: "verifique se os dados estao corretos" })
+    if (ContatoInfo == null) {
+      res.status(400).json({ message: "Erro no Banco de dados" })
+      return
     }
 
-  )
-}
+    const deleteContato = await new listRepository().deleteUniqueTelephone(ContatoInfo.id)
 
-
-const listDelete = async (req, res) => {
-  const list = new listRepository()
-  const userInfoJwt = jwtInfo(req)
-
-  const contatoInfo = await list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser)
-  if (contatoInfo == null) {// verifica se ele existe
-    return res.status(400).json({ message: "verifique se os dados estao corretos" })
+    res.status(200).json({ deleteContato })
   }
-
-
-  await list.deleteUniqueTelephone(contatoInfo.id).then(
-    (value) => {
-      res.status(200).json({ message: "Deletado com sucesso" })
-
-    }
-  )
-
+  catch (err) {
+    res.status(400).json({ message: "Erro " })
+  }
 }
 
 

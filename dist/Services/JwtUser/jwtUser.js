@@ -30,9 +30,13 @@ const jwtProtect = (req, res, next) => {
 // pega as informacoes do token
 // mais facil criar uma funcao para pegar essas informacoes 
 const jwtInfo = (req) => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    const info = jwt.verify(token, secret);
-    console.log(info);
+    try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        return jwt.verify(token, secret);
+    }
+    catch (err) {
+        throw new Error;
+    }
 };
 export { jwtToken, jwtProtect, jwtInfo };

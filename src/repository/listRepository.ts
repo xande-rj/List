@@ -38,30 +38,41 @@ export class listRepository {
 
   }
 
-  async findUniqueTelephone(data, Id) {
+  async findUniqueTelephone(data: string, Id: number): Promise<{ name: string, telefone: string, describe: string | null, authorId: number, id: number } | null> {
 
     return await this.prisma.list.findFirst({
       where: {
         telefone: data,
         authorId: Id
-      },
+      }, omit: {
+        createdAt: true,
+        updateAt: true,
+      }
     })
 
   }
 
-  async updateUniqueTelephone(dados, Id) {
+  async updateUniqueTelephone(dados: object, Id: number): Promise<{ name: string, updateAt: Date, telefone: string, describe: string | null }> {
     return await this.prisma.list.update({
       where: {
         id: Id
       },
-      data: dados
+      data: dados,
+      omit: {
+        authorId: true,
+        createdAt: true,
+        id: true
+      }
     })
   }
 
-  async deleteUniqueTelephone(Id) {
+  async deleteUniqueTelephone(Id: number): Promise<{ name: string, id: number, createdAt: Date, updateAt: Date, telefone: string, describe: string | null }> {
     return await this.prisma.list.delete({
       where: {
         id: Id
+      },
+      omit: {
+        authorId: true
       }
     })
   }

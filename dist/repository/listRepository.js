@@ -26,6 +26,12 @@ export class listRepository {
                     telefone: data.telefone,
                     describe: data.describe,
                     authorId: Id
+                },
+                omit: {
+                    authorId: true,
+                    id: true,
+                    updateAt: true,
+                    createdAt: true
                 }
             });
         });
@@ -36,7 +42,10 @@ export class listRepository {
                 where: {
                     telefone: data,
                     authorId: Id
-                },
+                }, omit: {
+                    createdAt: true,
+                    updateAt: true,
+                }
             });
         });
     }
@@ -46,7 +55,12 @@ export class listRepository {
                 where: {
                     id: Id
                 },
-                data: dados
+                data: dados,
+                omit: {
+                    authorId: true,
+                    createdAt: true,
+                    id: true
+                }
             });
         });
     }
@@ -55,6 +69,9 @@ export class listRepository {
             return yield this.prisma.list.delete({
                 where: {
                     id: Id
+                },
+                omit: {
+                    authorId: true
                 }
             });
         });

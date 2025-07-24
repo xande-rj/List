@@ -1,7 +1,8 @@
 import express from "express";
 import "dotenv/config";
-import { createUser, loginUser, updateUser, deleteUser } from '../Services/userService.ts';
-import { jwtProtect } from '../Services/JwtUser/jwtUser.js';
+import { listAll, registerList, listOne, updateList, listDelete } from '../Services/listServices';
+import { createUser, loginUser, updateUser, deleteUser } from '../Services/userService';
+import { jwtProtect } from '../Services/JwtUser/jwtUser';
 const app = express();
 const port = process.env.Port || 3000;
 // app.use(express.json()) habilita pegar o json que e enviado no post
@@ -11,14 +12,12 @@ app.post('/user', createUser);
 app.post('/users/login', loginUser);
 app.put('/users', jwtProtect, updateUser);
 app.delete('/users', jwtProtect, deleteUser);
-/*
 // rota de lista de contatos
-app.get('/users/list', jwtProtect, listAll)
-app.post('/users/list', jwtProtect, registerList)
-app.get('/users/list/:telefone', jwtProtect, listOne)
-app.put('/users/list/:telefone', jwtProtect, updateList)
-app.delete('/users/list/:telefone', jwtProtect, listDelete)
-*/
+app.get('/users/list', jwtProtect, listAll);
+app.post('/users/list', jwtProtect, registerList);
+app.get('/users/list/:telefone', jwtProtect, listOne);
+app.put('/users/list/:telefone', jwtProtect, updateList);
+app.delete('/users/list/:telefone', jwtProtect, listDelete);
 app.listen(port, () => {
     console.log(`rodando na porta${port}`);
 });

@@ -11,25 +11,19 @@ import { arrayInfoList, infoList } from "../schemas/List.schema";
 import { listRepository } from "../repository/listRepository";
 import { jwtInfo } from "./JwtUser/jwtUser";
 import { redisCreate, redisListAll } from "./redis/redisConnection";
-/*
-interface RedisList{[
-  
-]}*/
 const listAll = function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const emailJwt = jwtInfo(req);
             // verificar se existe no red
-            console.log(emailJwt);
             const redisAll = yield redisListAll(emailJwt.idUser);
             if (redisAll) {
-                res.status(200).json({ Contato: redisAll });
+                res.status(200).json({ Contatos: redisAll });
+                return;
             }
             const listRepo = yield new listRepository().findAll(emailJwt.emailUser);
-            let listArraySchema;
-            listArraySchema = arrayInfoList.parse(listRepo);
-            yield redisCreate(listArraySchema, emailJwt.idUser);
-            res.status(200).json({ Contatos: listArraySchema });
+            yield redisCreate(arrayInfoList.parse(listRepo), emailJwt.idUser);
+            res.status(200).json({ Contatos: listRepo });
         }
         catch (e) {
             res.status(400).json({ message: "Erro no recebimento das informacoes" });
@@ -39,71 +33,59 @@ const listAll = function (req, res) {
 // cria um contato na lista com base no id do Usario logado, vindo do token
 const registerList = function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const list = new listRepository();
-        let contactList;
         try {
-            contactList = infoList.parse(req.body);
+            const contactList = infoList.parse(req.body);
+            const userInfoJwt = jwtInfo(req);
+            const createList = yield new listRepository().createList(contactList, userInfoJwt.idUser);
+            res.status(201).json(createList);
         }
         catch (e) {
             res.status(400).json({ message: "Verifique se as informacoes estao corretas" });
         }
-        const userInfoJwt = jwtInfo(req);
-        yield list.createList(contactList, userInfoJwt.idUser).then((value) => {
-            return res.status(201).json({ Contato: value });
-        }, (error) => {
-            return res.status(400).json({ mensage: "Erro ao cadastra o contato" });
-        });
     });
 };
 const listOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // estancia a classe 
-    const list = new listRepository();
-    // recebe o paramametro na requisicao 
-    // pega as informacoes no jwt 
-    const userInfoJwt = jwtInfo(req);
-    // procura no banco com base no telefone e no jwt  
-    yield list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser).then((value) => {
-        try {
-            const contato = infoList.parse(value);
-            return res.status(200).json({ Contato: contato });
+    try {
+        const userInfoJwt = jwtInfo(req);
+        const ContatoUnico = yield new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser);
+        if (ContatoUnico == null) {
+            res.status(400).json({ message: "Erro no banco de dados" });
+            return;
         }
-        catch (error) {
-            res.status(400).json({ mensage: "erro na busca verifique se as informacoes estao certas" });
-        }
-    });
+        res.status(200).json({ ContatoUnico });
+    }
+    catch (err) {
+        res.status(400).json({ message: 'Erro no Servico' });
+    }
 });
 const updateList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // estancia a classe 
-    const list = new listRepository();
-    // pega as informacoes no jwt 
-    const userInfoJwt = jwtInfo(req);
-    // pega as informacoes do contato desejado 
-    const contatoInfo = yield list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser);
-    if (contatoInfo == null) { // verifica se ele existe
-        return res.status(400).json({ message: "verifique se os dados estao corretos" });
+    try {
+        const userInfoJwt = jwtInfo(req);
+        const ContatoInfo = yield new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser);
+        if (ContatoInfo == null) {
+            res.status(400).json({ message: "Erro no Banco de dados verifique as informacoes" });
+            return;
+        }
+        const AttContato = yield new listRepository().updateUniqueTelephone(req.body, ContatoInfo.id);
+        res.status(200).json({ AttContato });
     }
-    // procura no banco com base no telefone e no jwt  
-    yield list.updateUniqueTelephone(req.body, contatoInfo.id).then((value) => {
-        try {
-            const contatoInfo = infoList.parse(value);
-            res.status(200).json({ message: contatoInfo });
-        }
-        catch (e) {
-            res.status(400).json({ message: " Erro na execucao" });
-        }
-    }, (error) => {
-        res.status(400).json({ message: "verifique se os dados estao corretos" });
-    });
+    catch (err) {
+        res.status(400).json({ message: "Erro ao atualizar as informacoes" });
+    }
 });
 const listDelete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const list = new listRepository();
-    const userInfoJwt = jwtInfo(req);
-    const contatoInfo = yield list.findUniqueTelephone(req.params.telefone, userInfoJwt.idUser);
-    if (contatoInfo == null) { // verifica se ele existe
-        return res.status(400).json({ message: "verifique se os dados estao corretos" });
+    try {
+        const userInfoJwt = jwtInfo(req);
+        const ContatoInfo = yield new listRepository().findUniqueTelephone(req.params.telefone, userInfoJwt.idUser);
+        if (ContatoInfo == null) {
+            res.status(400).json({ message: "Erro no Banco de dados" });
+            return;
+        }
+        const deleteContato = yield new listRepository().deleteUniqueTelephone(ContatoInfo.id);
+        res.status(200).json({ deleteContato });
     }
-    yield list.deleteUniqueTelephone(contatoInfo.id).then((value) => {
-        res.status(200).json({ message: "Deletado com sucesso" });
-    });
+    catch (err) {
+        res.status(400).json({ message: "Erro " });
+    }
 });
 export { listAll, registerList, listOne, updateList, listDelete };

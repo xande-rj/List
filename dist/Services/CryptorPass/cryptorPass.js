@@ -29,8 +29,8 @@ const comparePass = (password, passwordHash) => __awaiter(void 0, void 0, void 0
         const result = yield bcrypt.compare(password, passwordHash);
         return result;
     }
-    catch (e) {
-        console.log("erro na comparacao" + e);
+    catch (err) {
+        console.log("erro na comparacao" + err);
         throw err;
     }
 });

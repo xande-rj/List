@@ -61,12 +61,13 @@ const loginUser = async function (req: Request, res: Response<{ message: string 
 
   try {
     const userLogin: usuarioLoginSchema = userLoginSchema.parse(req.body)
+
     const userInfo: userInfoData | null = await new userRepository().findUniqueUser(userLogin.email)
     const comparePassUser: boolean = await comparePass(userLogin.senha, userInfo?.senha)
 
-
     if (!comparePassUser) {
       res.status(400).json({ erro: "senha errada" })
+      return
     }
 
     const token: string = jwtToken(userInfo?.email, userInfo?.id)

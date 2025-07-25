@@ -26,17 +26,16 @@ const listAll = async function (req: Request, res: Response): Promise<void> {
   try {
     const emailJwt: UserJwt = jwtInfo(req)
     // verificar se existe no red
-
-    const redisAll: readonly [{ name: string, telefone: string, describe: string }] = await redisListAll(emailJwt.idUser)
+    const redisAll: readonly [{ name: string, telefone: string, describe: string }] | boolean = await redisListAll(emailJwt.idUser)
     if (redisAll) {
       res.status(200).json({ Contatos: redisAll })
       return
     }
 
     const listRepo = await new listRepository().findAll(emailJwt.emailUser)
-    await redisCreate(arrayInfoList.parse(listRepo), emailJwt.idUser)
+    const listRedis = await redisCreate(arrayInfoList.parse(listRepo), emailJwt.idUser)
 
-    res.status(200).json({ Contatos: listRepo })
+    res.status(200).json({ Contatos: listRedis })
   } catch (e) {
     res.status(400).json({ message: "Erro no recebimento das informacoes" })
   }

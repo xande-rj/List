@@ -17,8 +17,11 @@ const cryptorPass = async (password: string): Promise<string> => {
 
 // funcao retorna uma promise que precisa de then e catch
 //
-const comparePass = async (password: string, passwordHash: string): Promise<boolean> => {
+const comparePass = async (password: string, passwordHash: string | undefined): Promise<boolean> => {
   try {
+    if (passwordHash == undefined) {
+      return false
+    }
     const result: boolean = await bcrypt.compare(password, passwordHash)
     return result
   }

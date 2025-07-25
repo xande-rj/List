@@ -42,8 +42,8 @@ const userUpdatePassword = z.object({
 })
 
 interface userInfoData {
-  id?: number,
-  email?: string,
-  senha?: string
+  id: number,
+  email: string,
+  senha: string
 }
 export { userCreateSchema, userLoginSchema, userUpdatePassword, userInfoData, userCreate }
